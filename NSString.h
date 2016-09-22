@@ -1,7 +1,7 @@
 //
 // 1、NSString 操作
 //
-
+#import <UIKit/UIKit.h>
 // 1. 字符串截取操作
 
 /*
@@ -25,6 +25,14 @@
  */
 - (NSArray<NSString *> *)componentsSeparatedByCharactersInSet:(NSCharacterSet *)separator;
 
+/*
+ 3. 字符串补全
+ Returns a new string formed from the receiver by either removing characters 
+ from the end, or by appending as many occurrences as necessary of a given pad string.
+ */
+- (NSString *)stringByPaddingToLength:(NSUInteger)newLength 
+						   withString:(NSString *)padString
+					  startingAtIndex:(NSUInteger)padIndex;
 
 
 //==============================================================================
