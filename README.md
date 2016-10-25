@@ -20,7 +20,7 @@ git remote get-url [--push] [--all] <name>
 ```
 
 
-###Git忽略规则及.gitignore规则不生效的解决办法
+###4、Git忽略规则及.gitignore规则不生效的解决办法
 
 在git中如果想忽略掉某个文件，不让这个文件提交到版本库中，可以使用修改根目录中 .gitignore 文件的方法（如无，则需自己手工建立此文件）。这个文件每一行保存了一个匹配的规则例如：
 
@@ -40,3 +40,6 @@ git rm -r --cached .
 git add .
 git commit -m 'update .gitignore'
 ```
+
+###5、Podfile.lock 文件
+当你执行pod install之后，除了 Podfile 外，CocoaPods 还会生成一个名为Podfile.lock的文件，Podfile.lock 应该加入到版本控制里面，不应该把这个文件加入到.gitignore中。因为Podfile.lock会锁定当前各依赖库的版本，之后如果多次执行pod install 不会更改版本，要pod update才会改Podfile.lock了。这样多人协作的时候，可以防止第三方库升级时造成大家各自的第三方库版本不一致
