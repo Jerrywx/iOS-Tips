@@ -1,6 +1,6 @@
 # iOS-Tips
 
-###git 使用
+##git 使用
 ####1、为项目添加远程仓库地址
 ```
 git remote add origin git@github.com:djqiang（github帐号名）/gitdemo（项目名）.git 
@@ -43,3 +43,36 @@ git commit -m 'update .gitignore'
 
 ###5、Podfile.lock 文件
 当你执行pod install之后，除了 Podfile 外，CocoaPods 还会生成一个名为Podfile.lock的文件，Podfile.lock 应该加入到版本控制里面，不应该把这个文件加入到.gitignore中。因为Podfile.lock会锁定当前各依赖库的版本，之后如果多次执行pod install 不会更改版本，要pod update才会改Podfile.lock了。这样多人协作的时候，可以防止第三方库升级时造成大家各自的第三方库版本不一致
+
+
+## Cocoapods 版本升级
+
+#### 1、 更新 gem ，国内需切换 gem source
+```
+$ sudo gem update --system
+```
+切换 gem source
+
+```
+$ gem sources --add https://ruby.taobao.org/ --remove https://rubygems.org/
+
+$ gem sources -l
+*** CURRENT SOURCES***
+
+https://ruby.taobao.org
+```
+
+#### 2、安装 cocoapods
+
+```
+$ sudo gem install cocoapods
+$ pod setup
+```
+和安装过程是一样的，再次查看 pod 版本：
+
+```
+$ pod --version
+
+0.39.0
+```
+
