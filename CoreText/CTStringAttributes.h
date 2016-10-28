@@ -24,16 +24,10 @@ CF_ASSUME_NONNULL_BEGIN
  file it wants to. */
 
 /* --------------------------------------------------------------------------- */
-/* CFAttributedStringRef Attribute Prototypes */
+/* CFAttributedStringRef Attribute Prototypes 属性*/
 /* --------------------------------------------------------------------------- */
 
-/*!
- @const      kCTFontAttributeName
- @abstract   The font.
- 
- @discussion Value must be a CTFontRef. Default is Helvetica 12.
- */
-
+/// The Font.				CTFontRef.			Default is 12
 CT_EXPORT const CFStringRef kCTFontAttributeName CT_AVAILABLE(10_5, 3_2);
 
 
@@ -51,7 +45,7 @@ CT_EXPORT const CFStringRef kCTFontAttributeName CT_AVAILABLE(10_5, 3_2);
  color used by kCTUnderlineStyleAttributeName, in which case it
  overrides the foreground color.
  */
-
+/// Foreground Color.		CFBooleanRef.		Default is false.
 CT_EXPORT const CFStringRef kCTForegroundColorFromContextAttributeName CT_AVAILABLE(10_5, 3_2);
 
 
