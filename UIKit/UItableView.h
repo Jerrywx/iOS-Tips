@@ -1,31 +1,16 @@
-//
-//  UITableView.h
-//  UIKit
-//
-//  Copyright (c) 2005-2016 Apple Inc. All rights reserved.
-//
-
-#import <Foundation/Foundation.h>
-#import <CoreGraphics/CoreGraphics.h>
-#import <UIKit/UIScrollView.h>
-#import <UIKit/UISwipeGestureRecognizer.h>
-#import <UIKit/UITableViewCell.h>
-#import <UIKit/UIKitDefines.h>
-
-NS_ASSUME_NONNULL_BEGIN
-
+/// UITableView 样式
 typedef NS_ENUM(NSInteger, UITableViewStyle) {
-	UITableViewStylePlain,          // regular table view
-	UITableViewStyleGrouped         // preferences style table view
+	UITableViewStylePlain,
+	UITableViewStyleGrouped
 };
-
+/// 设置显示 Cell 的位置
 typedef NS_ENUM(NSInteger, UITableViewScrollPosition) {
 	UITableViewScrollPositionNone,
 	UITableViewScrollPositionTop,
 	UITableViewScrollPositionMiddle,
 	UITableViewScrollPositionBottom
-};                // scroll so row of interest is completely visible at top/center/bottom of view
-
+};
+/// 动画样式
 typedef NS_ENUM(NSInteger, UITableViewRowAnimation) {
 	UITableViewRowAnimationFade,
 	UITableViewRowAnimationRight,           // slide in from right (or out to right)
@@ -33,7 +18,7 @@ typedef NS_ENUM(NSInteger, UITableViewRowAnimation) {
 	UITableViewRowAnimationTop,
 	UITableViewRowAnimationBottom,
 	UITableViewRowAnimationNone,            // available in iOS 3.0
-	UITableViewRowAnimationMiddle,          // available in iOS 3.2.  attempts to keep cell centered in the space it will/did occupy
+	UITableViewRowAnimationMiddle,
 	UITableViewRowAnimationAutomatic = 100  // available in iOS 5.0.  chooses an appropriate animation style for you
 };
 
@@ -44,21 +29,12 @@ UIKIT_EXTERN NSString *const UITableViewIndexSearch NS_AVAILABLE_IOS(3_0) __TVOS
 // Returning this value from tableView:heightForHeaderInSection: or tableView:heightForFooterInSection: results in a height that fits the value returned from
 // tableView:titleForHeaderInSection: or tableView:titleForFooterInSection: if the title is not nil.
 UIKIT_EXTERN const CGFloat UITableViewAutomaticDimension NS_AVAILABLE_IOS(5_0);
-
-@class UITableView;
-@class UINib;
-@protocol UITableViewDataSource;
-@protocol UITableViewDataSourcePrefetching;
-@class UILongPressGestureRecognizer;
-@class UITableViewHeaderFooterView;
-@class UIRefreshControl;
-@class UIVisualEffect;
-
+///
 typedef NS_ENUM(NSInteger, UITableViewRowActionStyle) {
-	UITableViewRowActionStyleDefault = 0,
+	UITableViewRowActionStyleDefault	 = 0,
 	UITableViewRowActionStyleDestructive = UITableViewRowActionStyleDefault,
 	UITableViewRowActionStyleNormal
-} NS_ENUM_AVAILABLE_IOS(8_0) __TVOS_PROHIBITED;
+};
 
 NS_CLASS_AVAILABLE_IOS(8_0) __TVOS_PROHIBITED @interface UITableViewRowAction : NSObject <NSCopying>
 
@@ -78,111 +54,21 @@ NS_CLASS_AVAILABLE_IOS(9_0) @interface UITableViewFocusUpdateContext : UIFocusUp
 
 @end
 
-//_______________________________________________________________________________________________________________
-// this represents the display and behaviour of the cells.
-
-@protocol UITableViewDelegate<NSObject, UIScrollViewDelegate>
-
-@optional
-
-// Display customization
-
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
-- (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section NS_AVAILABLE_IOS(6_0);
-- (void)tableView:(UITableView *)tableView willDisplayFooterView:(UIView *)view forSection:(NSInteger)section NS_AVAILABLE_IOS(6_0);
-- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath*)indexPath NS_AVAILABLE_IOS(6_0);
-- (void)tableView:(UITableView *)tableView didEndDisplayingHeaderView:(UIView *)view forSection:(NSInteger)section NS_AVAILABLE_IOS(6_0);
-- (void)tableView:(UITableView *)tableView didEndDisplayingFooterView:(UIView *)view forSection:(NSInteger)section NS_AVAILABLE_IOS(6_0);
-
-// Variable height support
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section;
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section;
-
-// Use the estimatedHeight methods to quickly calcuate guessed values which will allow for fast load times of the table.
-// If these methods are implemented, the above -tableView:heightForXXX calls will be deferred until views are ready to be displayed, so more expensive logic can be placed there.
-- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(7_0);
-- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForHeaderInSection:(NSInteger)section NS_AVAILABLE_IOS(7_0);
-- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForFooterInSection:(NSInteger)section NS_AVAILABLE_IOS(7_0);
-
-// Section header & footer information. Views are preferred over title should you decide to provide both
-
-- (nullable UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section;   // custom view for header. will be adjusted to default or specified header height
-- (nullable UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section;   // custom view for footer. will be adjusted to default or specified footer height
-
-// Accessories (disclosures).
-
-- (UITableViewCellAccessoryType)tableView:(UITableView *)tableView accessoryTypeForRowWithIndexPath:(NSIndexPath *)indexPath NS_DEPRECATED_IOS(2_0, 3_0) __TVOS_PROHIBITED;
-- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath;
-
-// Selection
-
-// -tableView:shouldHighlightRowAtIndexPath: is called when a touch comes down on a row.
-// Returning NO to that message halts the selection process and does not cause the currently selected row to lose its selected look while the touch is down.
-- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(6_0);
-- (void)tableView:(UITableView *)tableView didHighlightRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(6_0);
-- (void)tableView:(UITableView *)tableView didUnhighlightRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(6_0);
-
-// Called before the user changes the selection. Return a new indexPath, or nil, to change the proposed selection.
-- (nullable NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath;
-- (nullable NSIndexPath *)tableView:(UITableView *)tableView willDeselectRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(3_0);
-// Called after the user changes the selection.
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
-- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(3_0);
-
-// Editing
-
-// Allows customization of the editingStyle for a particular cell located at 'indexPath'. If not implemented, all editable cells will have UITableViewCellEditingStyleDelete set for them when the table has editing property set to YES.
-- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath;
-- (nullable NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(3_0) __TVOS_PROHIBITED;
-- (nullable NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(8_0) __TVOS_PROHIBITED; // supercedes -tableView:titleForDeleteConfirmationButtonForRowAtIndexPath: if return value is non-nil
-
-// Controls whether the background is indented while editing.  If not implemented, the default is YES.  This is unrelated to the indentation level below.  This method only applies to grouped style table views.
-- (BOOL)tableView:(UITableView *)tableView shouldIndentWhileEditingRowAtIndexPath:(NSIndexPath *)indexPath;
-
-// The willBegin/didEnd methods are called whenever the 'editing' property is automatically changed by the table (allowing insert/delete/move). This is done by a swipe activating a single row
-- (void)tableView:(UITableView *)tableView willBeginEditingRowAtIndexPath:(NSIndexPath *)indexPath __TVOS_PROHIBITED;
-- (void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(nullable NSIndexPath *)indexPath __TVOS_PROHIBITED;
-
-// Moving/reordering
-
-// Allows customization of the target row for a particular row as it is being moved/reordered
-- (NSIndexPath *)tableView:(UITableView *)tableView targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath toProposedIndexPath:(NSIndexPath *)proposedDestinationIndexPath;
-
-// Indentation
-
-- (NSInteger)tableView:(UITableView *)tableView indentationLevelForRowAtIndexPath:(NSIndexPath *)indexPath; // return 'depth' of row for hierarchies
-
-// Copy/Paste.  All three methods must be implemented by the delegate.
-
-- (BOOL)tableView:(UITableView *)tableView shouldShowMenuForRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(5_0);
-- (BOOL)tableView:(UITableView *)tableView canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(nullable id)sender NS_AVAILABLE_IOS(5_0);
-- (void)tableView:(UITableView *)tableView performAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(nullable id)sender NS_AVAILABLE_IOS(5_0);
-
-// Focus
-
-- (BOOL)tableView:(UITableView *)tableView canFocusRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(9_0);
-- (BOOL)tableView:(UITableView *)tableView shouldUpdateFocusInContext:(UITableViewFocusUpdateContext *)context NS_AVAILABLE_IOS(9_0);
-- (void)tableView:(UITableView *)tableView didUpdateFocusInContext:(UITableViewFocusUpdateContext *)context withAnimationCoordinator:(UIFocusAnimationCoordinator *)coordinator NS_AVAILABLE_IOS(9_0);
-- (nullable NSIndexPath *)indexPathForPreferredFocusedViewInTableView:(UITableView *)tableView NS_AVAILABLE_IOS(9_0);
-
-@end
-
-UIKIT_EXTERN NSNotificationName const UITableViewSelectionDidChangeNotification;
+/// 选中cell通知
+NSNotificationName const UITableViewSelectionDidChangeNotification;
 
 
 //_______________________________________________________________________________________________________________
 
-NS_CLASS_AVAILABLE_IOS(2_0) @interface UITableView : UIScrollView <NSCoding>
+@interface UITableView : UIScrollView <NSCoding>
 
 - (instancetype)initWithFrame:(CGRect)frame style:(UITableViewStyle)style NS_DESIGNATED_INITIALIZER; // must specify style at creation. -initWithFrame: calls this with UITableViewStylePlain
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder NS_DESIGNATED_INITIALIZER;
 
-@property (nonatomic, readonly) UITableViewStyle style;
-@property (nonatomic, weak, nullable) id <UITableViewDataSource> dataSource;
-@property (nonatomic, weak, nullable) id <UITableViewDelegate> delegate;
-@property (nonatomic, weak) id<UITableViewDataSourcePrefetching> prefetchDataSource NS_AVAILABLE_IOS(10_0);
+@property (nonatomic, readonly) UITableViewStyle					style;
+@property (nonatomic, weak, nullable) id <UITableViewDataSource>	dataSource;
+@property (nonatomic, weak, nullable) id <UITableViewDelegate>		delegate;
+@property (nonatomic, weak) id<UITableViewDataSourcePrefetching>	prefetchDataSource NS_AVAILABLE_IOS(10_0);
 @property (nonatomic) CGFloat rowHeight;             // will return the default value if unset
 @property (nonatomic) CGFloat sectionHeaderHeight;   // will return the default value if unset
 @property (nonatomic) CGFloat sectionFooterHeight;   // will return the default value if unset
@@ -291,29 +177,119 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UITableView : UIScrollView <NSCoding>
 
 @end
 
-//_______________________________________________________________________________________________________________
-// this protocol represents the data model object. as such, it supplies no information about appearance (including the cells)
 
-@protocol UITableViewDataSource<NSObject>
+/* --------------------------------------------------------------------------- */
+/* UITableViewDelegate														   */
+/* --------------------------------------------------------------------------- */
+@protocol UITableViewDelegate<NSObject, UIScrollViewDelegate>
+@optional
 
+// Display customization
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath;
+
+- (void)tableView:(UITableView *)tableView willDisplayHeaderView:(UIView *)view forSection:(NSInteger)section;
+
+- (void)tableView:(UITableView *)tableView willDisplayFooterView:(UIView *)view forSection:(NSInteger)section;
+
+- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath*)indexPath;
+
+- (void)tableView:(UITableView *)tableView didEndDisplayingHeaderView:(UIView *)view forSection:(NSInteger)section;
+
+- (void)tableView:(UITableView *)tableView didEndDisplayingFooterView:(UIView *)view forSection:(NSInteger)section;
+
+// Variable height support
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section;
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section;
+
+// Use the estimatedHeight methods to quickly calcuate guessed values which will allow for fast load times of the table.
+// If these methods are implemented, the above -tableView:heightForXXX calls will be deferred until views are ready to be displayed, so more expensive logic can be placed there.
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(7_0);
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForHeaderInSection:(NSInteger)section NS_AVAILABLE_IOS(7_0);
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForFooterInSection:(NSInteger)section NS_AVAILABLE_IOS(7_0);
+
+// Section header & footer information. Views are preferred over title should you decide to provide both
+
+- (nullable UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section;
+// custom view for header. will be adjusted to default or specified header height
+- (nullable UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section;
+// custom view for footer. will be adjusted to default or specified footer height
+
+// Accessories (disclosures).
+- (UITableViewCellAccessoryType)tableView:(UITableView *)tableView accessoryTypeForRowWithIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath;
+
+// Selection
+// -tableView:shouldHighlightRowAtIndexPath: is called when a touch comes down on a row.
+// Returning NO to that message halts the selection process and does not cause the currently selected row to lose its selected look while the touch is down.
+- (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(6_0);
+- (void)tableView:(UITableView *)tableView didHighlightRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(6_0);
+- (void)tableView:(UITableView *)tableView didUnhighlightRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(6_0);
+
+// Called before the user changes the selection. Return a new indexPath, or nil, to change the proposed selection.
+- (nullable NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (nullable NSIndexPath *)tableView:(UITableView *)tableView willDeselectRowAtIndexPath:(NSIndexPath *)indexPath;
+
+
+// Called after the user changes the selection.
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath;
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(3_0);
+
+// Editing
+// Allows customization of the editingStyle for a particular cell located at 'indexPath'.
+// If not implemented, all editable cells will have UITableViewCellEditingStyleDelete set for them when the table has editing property set to YES.
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath;
+- (nullable NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath;
+- (nullable NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath;
+// supercedes -tableView:titleForDeleteConfirmationButtonForRowAtIndexPath: if return value is non-nil
+
+// Controls whether the background is indented while editing.  If not implemented, the default is YES.  This is unrelated to the indentation level below.  This method only applies to grouped style table views.
+- (BOOL)tableView:(UITableView *)tableView shouldIndentWhileEditingRowAtIndexPath:(NSIndexPath *)indexPath;
+
+// The willBegin/didEnd methods are called whenever the 'editing' property is automatically changed by the table
+// (allowing insert/delete/move). This is done by a swipe activating a single row
+- (void)tableView:(UITableView *)tableView willBeginEditingRowAtIndexPath:(NSIndexPath *)indexPath __TVOS_PROHIBITED;
+- (void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(nullable NSIndexPath *)indexPath __TVOS_PROHIBITED;
+
+// Moving/reordering
+// Allows customization of the target row for a particular row as it is being moved/reordered
+- (NSIndexPath *)tableView:(UITableView *)tableView targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath toProposedIndexPath:(NSIndexPath *)proposedDestinationIndexPath;
+
+// Indentation
+- (NSInteger)tableView:(UITableView *)tableView indentationLevelForRowAtIndexPath:(NSIndexPath *)indexPath; // return 'depth' of row for hierarchies
+
+// Copy/Paste.  All three methods must be implemented by the delegate.
+- (BOOL)tableView:(UITableView *)tableView shouldShowMenuForRowAtIndexPath:(NSIndexPath *)indexPath;
+- (BOOL)tableView:(UITableView *)tableView canPerformAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(nullable id)sender;
+- (void)tableView:(UITableView *)tableView performAction:(SEL)action forRowAtIndexPath:(NSIndexPath *)indexPath withSender:(nullable id)sender;
+
+// Focus
+- (BOOL)tableView:(UITableView *)tableView canFocusRowAtIndexPath:(NSIndexPath *)indexPath NS_AVAILABLE_IOS(9_0);
+- (BOOL)tableView:(UITableView *)tableView shouldUpdateFocusInContext:(UITableViewFocusUpdateContext *)context NS_AVAILABLE_IOS(9_0);
+- (void)tableView:(UITableView *)tableView didUpdateFocusInContext:(UITableViewFocusUpdateContext *)context withAnimationCoordinator:(UIFocusAnimationCoordinator *)coordinator NS_AVAILABLE_IOS(9_0);
+- (nullable NSIndexPath *)indexPathForPreferredFocusedViewInTableView:(UITableView *)tableView NS_AVAILABLE_IOS(9_0);
+
+@end
+
+/* --------------------------------------------------------------------------- */
+/* UITableViewDataSource													   */
+/* --------------------------------------------------------------------------- */
+@protocol UITableViewDataSource <NSObject>
 @required
-
+/// cell 行数
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
-
-// Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:
-// Cell gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
-
+/// cell
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 
 @optional
+/// 组数
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;
+// fixed font style. use custom view (UILabel) if you want something different
+- (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;              // Default is 1 if not implemented
-
-- (nullable NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section;    // fixed font style. use custom view (UILabel) if you want something different
 - (nullable NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section;
 
 // Editing
-
 // Individual rows can opt out of having the -editing property set for them. If not implemented, all rows are assumed to be editable.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath;
 
@@ -340,9 +316,9 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UITableView : UIScrollView <NSCoding>
 @end
 
 
-// _______________________________________________________________________________________________________________
-// this protocol can provide information about cells before they are displayed on screen.
-
+/* --------------------------------------------------------------------------- */
+/* UITableViewDataSourcePrefetching											   */
+/* --------------------------------------------------------------------------- */
 @protocol UITableViewDataSourcePrefetching <NSObject>
 
 @required
@@ -358,9 +334,9 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UITableView : UIScrollView <NSCoding>
 @end
 
 
-//_______________________________________________________________________________________________________________
-
-// This category provides convenience methods to make it easier to use an NSIndexPath to represent a section and row
+/* --------------------------------------------------------------------------- */
+/* NSIndexPath (UITableView)												   */
+/* --------------------------------------------------------------------------- */
 @interface NSIndexPath (UITableView)
 
 + (instancetype)indexPathForRow:(NSInteger)row inSection:(NSInteger)section;
@@ -369,5 +345,3 @@ NS_CLASS_AVAILABLE_IOS(2_0) @interface UITableView : UIScrollView <NSCoding>
 @property (nonatomic, readonly) NSInteger row;
 
 @end
-
-NS_ASSUME_NONNULL_END
