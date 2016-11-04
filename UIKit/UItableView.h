@@ -36,13 +36,15 @@ typedef NS_ENUM(NSInteger, UITableViewRowActionStyle) {
 	UITableViewRowActionStyleNormal
 };
 
-NS_CLASS_AVAILABLE_IOS(8_0) __TVOS_PROHIBITED @interface UITableViewRowAction : NSObject <NSCopying>
+@interface UITableViewRowAction : NSObject <NSCopying>
 
-+ (instancetype)rowActionWithStyle:(UITableViewRowActionStyle)style title:(nullable NSString *)title handler:(void (^)(UITableViewRowAction *action, NSIndexPath *indexPath))handler;
++ (instancetype)rowActionWithStyle:(UITableViewRowActionStyle)style 
+							 title:(nullable NSString *)title 
+						   handler:(void (^)(UITableViewRowAction *action, NSIndexPath *indexPath))handler;
 
 @property (nonatomic, readonly) UITableViewRowActionStyle style;
-@property (nonatomic, copy, nullable) NSString *title;
-@property (nonatomic, copy, nullable) UIColor *backgroundColor; // default background color is dependent on style
+@property (nonatomic, copy, nullable) NSString	*title;
+@property (nonatomic, copy, nullable) UIColor	*backgroundColor; // default background color is dependent on style
 @property (nonatomic, copy, nullable) UIVisualEffect* backgroundEffect;
 
 @end
@@ -69,23 +71,26 @@ NSNotificationName const UITableViewSelectionDidChangeNotification;
 @property (nonatomic, weak, nullable) id <UITableViewDataSource>	dataSource;
 @property (nonatomic, weak, nullable) id <UITableViewDelegate>		delegate;
 @property (nonatomic, weak) id<UITableViewDataSourcePrefetching>	prefetchDataSource NS_AVAILABLE_IOS(10_0);
-@property (nonatomic) CGFloat rowHeight;             // will return the default value if unset
-@property (nonatomic) CGFloat sectionHeaderHeight;   // will return the default value if unset
-@property (nonatomic) CGFloat sectionFooterHeight;   // will return the default value if unset
-@property (nonatomic) CGFloat estimatedRowHeight NS_AVAILABLE_IOS(7_0); // default is 0, which means there is no estimate
-@property (nonatomic) CGFloat estimatedSectionHeaderHeight NS_AVAILABLE_IOS(7_0); // default is 0, which means there is no estimate
-@property (nonatomic) CGFloat estimatedSectionFooterHeight NS_AVAILABLE_IOS(7_0); // default is 0, which means there is no estimate
-@property (nonatomic) UIEdgeInsets separatorInset NS_AVAILABLE_IOS(7_0) UI_APPEARANCE_SELECTOR; // allows customization of the frame of cell separators
+@property (nonatomic) CGFloat rowHeight;								// will return the default value if unset
+@property (nonatomic) CGFloat sectionHeaderHeight;						// will return the default value if unset
+@property (nonatomic) CGFloat sectionFooterHeight;						// will return the default value if unset
+@property (nonatomic) CGFloat estimatedRowHeight;						// default is 0, which means there is no estimate
+@property (nonatomic) CGFloat estimatedSectionHeaderHeight;				// default is 0, which means there is no estimate
+@property (nonatomic) CGFloat estimatedSectionFooterHeight;				// default is 0, which means there is no estimate
+@property (nonatomic) UIEdgeInsets separatorInset;						// allows customization of the frame of cell separators
 
-@property (nonatomic, strong, nullable) UIView *backgroundView NS_AVAILABLE_IOS(3_2); // the background view will be automatically resized to track the size of the table view.  this will be placed as a subview of the table view behind all cells and headers/footers.  default may be non-nil for some devices.
+@property (nonatomic, strong, nullable) UIView *backgroundView;
+// the background view will be automatically resized to track the size of the table view.
+// this will be placed as a subview of the table view behind all cells and headers/footers.  default may be non-nil for some devices.
 
 // Data
-
-- (void)reloadData; // reloads everything from scratch. redisplays visible rows. because we only keep info about visible rows, this is cheap. will adjust offset if table shrinks
-- (void)reloadSectionIndexTitles NS_AVAILABLE_IOS(3_0);   // reloads the index bar.
+- (void)reloadData;
+// reloads everything from scratch. redisplays visible rows.
+// because we only keep info about visible rows, this is cheap. will adjust offset if table shrinks
+- (void)reloadSectionIndexTitles;
+// reloads the index bar.
 
 // Info
-
 @property (nonatomic, readonly) NSInteger numberOfSections;
 - (NSInteger)numberOfRowsInSection:(NSInteger)section;
 
