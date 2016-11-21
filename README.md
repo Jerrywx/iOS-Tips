@@ -45,6 +45,15 @@ git commit -m 'update .gitignore'
 当你执行pod install之后，除了 Podfile 外，CocoaPods 还会生成一个名为Podfile.lock的文件，Podfile.lock 应该加入到版本控制里面，不应该把这个文件加入到.gitignore中。因为Podfile.lock会锁定当前各依赖库的版本，之后如果多次执行pod install 不会更改版本，要pod update才会改Podfile.lock了。这样多人协作的时候，可以防止第三方库升级时造成大家各自的第三方库版本不一致
 
 
+###6、git 设置用户名和邮箱
+```
+1 git config --global user.name "youname"
+2 git config --global user.name "youeamil@email.com"
+
+```
+查看用户信息
+git config --list
+
 ## Cocoapods 版本升级
 
 #### 1、 更新 gem ，国内需切换 gem source
